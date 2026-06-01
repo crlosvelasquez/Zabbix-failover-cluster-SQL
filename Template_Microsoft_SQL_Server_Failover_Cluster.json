@@ -1,0 +1,198 @@
+{
+    "zabbix_export": {
+        "version": "6.0",
+        "date": "2026-06-01T12:00:00Z",
+        "groups": [
+            {
+                "uuid": "be2bd432fa1542a2bebf24a2abba5317",
+                "name": "Templates"
+            }
+        ],
+        "templates": [
+            {
+                "uuid": "765b5121283f4285a84a6e9d76f912c3",
+                "template": "Template Windows SQL Failover Cluster",
+                "name": "Template Windows SQL Failover Cluster",
+                "description": "This template provides comprehensive monitoring for a Microsoft SQL Server Failover Cluster (FCI or AlwaysOn) and its underlying Windows Server failover infrastructure.\n\nKey features:\n- SQL Server Roles: Discovers cluster roles and monitors which active node is currently hosting the SQL instance, triggering an alert upon a failover event.\n- SQL Server Resources: Tracks the health and state of individual SQL resources (Database Engine, SQL Agent, etc.) to ensure they remain 'Online'.\n- Cluster Storage: Discovers Physical Disks and Cluster Shared Volumes (CSVs). It monitors both their operational state and their active owner node, alerting on outages or unexpected storage migrations.\n- Cluster Networks: Monitors the status of all cluster networks (e.g., heartbeat, public) to detect partitioned or down states.\n\nAll discovery rules and items are configured with a strict 5-minute polling interval for rapid incident detection. The template uses a hierarchical tagging system (Application: Failover Cluster, Component: SQL/Storage/Network) for streamlined filtering.",
+                "groups": [
+                    {
+                        "name": "Templates"
+                    }
+                ],
+                "discovery_rules": [
+                    {
+                        "uuid": "a459caf89dc346dbaa943a7864300ff0",
+                        "name": "Failover Cluster - Discovery - SQL Roles",
+                        "type": "ZABBIX_ACTIVE",
+                        "key": "sql.cluster.roles.discovery",
+                        "delay": "5m",
+                        "item_prototypes": [
+                            {
+                                "uuid": "50745e13e52a494582c088db97722b67",
+                                "name": "Failover Cluster - SQL - Role Active Node: {#ROLE_NAME}",
+                                "type": "ZABBIX_ACTIVE",
+                                "key": "sql.cluster.role.activenode[{#ROLE_ID}]",
+                                "delay": "5m",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Failover Cluster"
+                                    },
+                                    {
+                                        "tag": "Component",
+                                        "value": "SQL"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "d3b660ca1f2e4f6d93237403116196ea",
+                                        "expression": "change(/Template Windows SQL Failover Cluster/sql.cluster.role.activenode[{#ROLE_ID}])=1",
+                                        "name": "Failover Cluster - SQL: Role \"{#ROLE_NAME}\" has changed active node (Failover)",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Failover Cluster - Discovery - SQL Resources",
+                        "type": "ZABBIX_ACTIVE",
+                        "key": "sql.cluster.resources.discovery",
+                        "delay": "5m",
+                        "uuid": "e29477d7a48343228bccad54097b89e4",
+                        "item_prototypes": [
+                            {
+                                "uuid": "83f0063b6103498cb0d47794a51dc877",
+                                "name": "Failover Cluster - SQL - Resource State: {#RES_NAME}",
+                                "type": "ZABBIX_ACTIVE",
+                                "key": "sql.cluster.resource.state[{#RES_ID}]",
+                                "delay": "5m",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Failover Cluster"
+                                    },
+                                    {
+                                        "tag": "Component",
+                                        "value": "SQL"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "2dcf878e1b1f4f149b92c895fc5bbe46",
+                                        "expression": "last(/Template Windows SQL Failover Cluster/sql.cluster.resource.state[{#RES_ID}])<>\"Online\"",
+                                        "name": "Failover Cluster - SQL: Resource \"{#RES_NAME}\" is not online",
+                                        "priority": "DISASTER"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Failover Cluster - Discovery - Storage Disks",
+                        "type": "ZABBIX_ACTIVE",
+                        "key": "cluster.disks.discovery",
+                        "delay": "5m",
+                        "uuid": "c2326f2157a646eea3476a8b05500f6e",
+                        "item_prototypes": [
+                            {
+                                "uuid": "3ee93c5c8a194ef286b71670573ea373",
+                                "name": "Failover Cluster - Storage - Disk State: {#DISK_NAME}",
+                                "type": "ZABBIX_ACTIVE",
+                                "key": "cluster.disk.state[{#DISK_ID}]",
+                                "delay": "5m",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Failover Cluster"
+                                    },
+                                    {
+                                        "tag": "Component",
+                                        "value": "Storage"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "a5587f8fa1224c568bcdc3ec2f9b24e9",
+                                        "expression": "last(/Template Windows SQL Failover Cluster/cluster.disk.state[{#DISK_ID}])<>\"Online\"",
+                                        "name": "Failover Cluster - Storage: Disk \"{#DISK_NAME}\" is not online",
+                                        "priority": "HIGH"
+                                    }
+                                ]
+                            },
+                            {
+                                "uuid": "60f9b8c258ab4d9aab8f21f0f87d866a",
+                                "name": "Failover Cluster - Storage - Disk Active Node: {#DISK_NAME}",
+                                "type": "ZABBIX_ACTIVE",
+                                "key": "cluster.disk.activenode[{#DISK_ID}]",
+                                "delay": "5m",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Failover Cluster"
+                                    },
+                                    {
+                                        "tag": "Component",
+                                        "value": "Storage"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "8bfcb7718c4a4be8a875b11a6d8e3f50",
+                                        "expression": "change(/Template Windows SQL Failover Cluster/cluster.disk.activenode[{#DISK_ID}])=1",
+                                        "name": "Failover Cluster - Storage: Disk \"{#DISK_NAME}\" has changed active node",
+                                        "priority": "WARNING"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Failover Cluster - Discovery - Networks",
+                        "type": "ZABBIX_ACTIVE",
+                        "key": "cluster.networks.discovery",
+                        "delay": "5m",
+                        "uuid": "fe602d2cb18d4a438c94582b15c440b5",
+                        "item_prototypes": [
+                            {
+                                "uuid": "8ce3f884c6ee4334910c3793e6c82b83",
+                                "name": "Failover Cluster - Network - State: {#NET_NAME}",
+                                "type": "ZABBIX_ACTIVE",
+                                "key": "cluster.network.state[{#NET_ID}]",
+                                "delay": "5m",
+                                "trends": "0",
+                                "value_type": "TEXT",
+                                "tags": [
+                                    {
+                                        "tag": "Application",
+                                        "value": "Failover Cluster"
+                                    },
+                                    {
+                                        "tag": "Component",
+                                        "value": "Network"
+                                    }
+                                ],
+                                "trigger_prototypes": [
+                                    {
+                                        "uuid": "73554af8fc4e438f9367eed24ec3a51a",
+                                        "expression": "last(/Template Windows SQL Failover Cluster/cluster.network.state[{#NET_ID}])<>\"Up\"",
+                                        "name": "Failover Cluster - Network: Network \"{#NET_NAME}\" is not operational (Down/Partitioned)",
+                                        "priority": "HIGH"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
