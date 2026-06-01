@@ -77,7 +77,7 @@ Restart-Service -Name "Zabbix Agent 2"
 ## 📂 Estructura del Repositorio
 
 * `README.md`: Este archivo de documentación.
-* `Template_Windows_SQL_Failover_Cluster_Final.json`: La plantilla oficial lista para importar en Zabbix 6.0+.
+* `Template_Windows_SQL_Failover_Cluster.json`: La plantilla oficial lista para importar en Zabbix 6.0+.
 * `zabbix_agent2.conf.example`: Ejemplo con las líneas exactas que deben agregarse al archivo de configuración del agente.
 * `/CustomScripts`: Directorio que contiene la lógica de extracción de datos para Roles, Recursos, Discos y Redes mediante PowerShell.
 
