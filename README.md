@@ -34,14 +34,24 @@ Sigue estos pasos en cada uno de los servidores (nodos) que forman parte de tu c
 Copia la carpeta `CustomScripts` (que contiene los 9 archivos `.ps1`) dentro del directorio de instalación de tu agente Zabbix.  
 Ruta recomendada: `C:\Program Files\Zabbix Agent 2\CustomScripts\`
 
-### Paso 2: Configurar los parámetros de usuario (UserParameters)
-Abre el archivo de configuración de tu agente (`zabbix_agent2.conf`) y añade el siguiente bloque de código al final del archivo. Esto le enseñará a Zabbix cómo ejecutar los scripts de descubrimiento y estado:
+### Paso 2: Configurar Zabbix Agent 2 (`zabbix_agent2.conf`)
+Abre el archivo de configuración principal de tu agente y realiza las siguientes modificaciones. 
+
+**1. Ajustes de rendimiento y ejecución:**
+Busca, descomenta y modifica estas dos líneas. El tiempo de espera (*Timeout*) extendido es obligatorio, ya que las consultas de clúster en PowerShell pueden tardar más de los 3 segundos que Zabbix otorga por defecto:
+
+```ini
+Timeout=30
+UnsafeUserParameters=1
+```
+
+**2. Parámetros de Usuario (UserParameters):**
+Añade el siguiente bloque de código al final del mismo archivo. Esto le enseñará a Zabbix cómo y dónde ejecutar los scripts de descubrimiento y estado:
 
 ```ini
 # =======================================================
 # MONITOREO DE FAILOVER CLUSTER (SQL, DISKS, NETWORKS)
 # =======================================================
-#Teniendo en cuenta que estas utilizando Zabbix Agent 2 si la ubicacion esta en otro lado se deben de hacer las modificaciones necesarias
 
 # --- SQL Server Roles ---
 UserParameter=sql.cluster.roles.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterRolesDiscovery.ps1"
@@ -62,7 +72,7 @@ UserParameter=cluster.network.state[*],powershell -NoProfile -ExecutionPolicy By
 ```
 
 ### Paso 3: Reiniciar el Agente
-Para que Zabbix Agent 2 reconozca los nuevos comandos, abre una consola de PowerShell como Administrador y reinicia el servicio:
+Para que Zabbix Agent 2 reconozca los nuevos comandos y el nuevo tiempo de espera, abre una consola de PowerShell como Administrador y reinicia el servicio:
 ```powershell
 Restart-Service -Name "Zabbix Agent 2"
 ```
@@ -78,9 +88,9 @@ Restart-Service -Name "Zabbix Agent 2"
 ## 📂 Estructura del Repositorio
 
 * `README.md`: Este archivo de documentación.
-* `Template_Windows_SQL_Failover_Cluster.json`: La plantilla oficial lista para importar en Zabbix 6.0+.
+* `Template_Windows_SQL_Failover_Cluster_Final.json`: La plantilla oficial lista para importar en Zabbix 6.0+.
 * `zabbix_agent2.conf.example`: Ejemplo con las líneas exactas que deben agregarse al archivo de configuración del agente.
 * `/CustomScripts`: Directorio que contiene la lógica de extracción de datos para Roles, Recursos, Discos y Redes mediante PowerShell.
 
 ## 🤝 Contribuciones
-¡Las mejoras y sugerencias son bienvenidas! Siéntete libre de abrir un *Issue* o enviar un *Pull Request* si deseas expandir el monitoreo a otros componentes del clúster de Windows.
+¡Las mejoras y sugerencias son bienvenidas! Siéntete libre de abrir un *Issue* o enviar un *Pull Request*.
