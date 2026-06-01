@@ -41,6 +41,7 @@ Abre el archivo de configuración de tu agente (`zabbix_agent2.conf`) y añade e
 # =======================================================
 # MONITOREO DE FAILOVER CLUSTER (SQL, DISKS, NETWORKS)
 # =======================================================
+#Teniendo en cuenta que estas utilizando Zabbix Agent 2 si la ubicacion esta en otro lado se deben de hacer las modificaciones necesarias
 
 # --- SQL Server Roles ---
 UserParameter=sql.cluster.roles.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterRolesDiscovery.ps1"
