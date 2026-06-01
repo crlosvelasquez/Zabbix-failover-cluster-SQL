@@ -1,3 +1,6 @@
+Timeout=30
+UnsafeUserParameters=1
+
 # =======================================================
 # MONITOREO DE FAILOVER CLUSTER (SQL, DISKS, NETWORKS)
 # =======================================================
