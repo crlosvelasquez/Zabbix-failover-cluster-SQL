@@ -1,0 +1,21 @@
+# =======================================================
+# MONITOREO DE FAILOVER CLUSTER (SQL, DISKS, NETWORKS)
+# =======================================================
+#Teniendo en cuenta que estas utilizando Zabbix Agent 2 si la ubicacion esta en otro lado se deben de hacer las modificaciones necesarias
+
+# --- SQL Server Roles ---
+UserParameter=sql.cluster.roles.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterRolesDiscovery.ps1"
+UserParameter=sql.cluster.role.activenode[*],powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterRoleActiveNode.ps1" -RoleId "$1"
+
+# --- SQL Server Resources ---
+UserParameter=sql.cluster.resources.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterResourcesDiscovery.ps1"
+UserParameter=sql.cluster.resource.state[*],powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\SqlClusterResourceState.ps1" -Id "$1"
+
+# --- Cluster Storage (Discos y CSV) ---
+UserParameter=cluster.disks.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\ClusterDisksDiscovery.ps1"
+UserParameter=cluster.disk.state[*],powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\ClusterDiskState.ps1" -Id "$1"
+UserParameter=cluster.disk.activenode[*],powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\ClusterDiskActiveNode.ps1" -Id "$1"
+
+# --- Cluster Networks ---
+UserParameter=cluster.networks.discovery,powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\ClusterNetworksDiscovery.ps1"
+UserParameter=cluster.network.state[*],powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Program Files\Zabbix Agent 2\CustomScripts\ClusterNetworkState.ps1" -Id "$1"
